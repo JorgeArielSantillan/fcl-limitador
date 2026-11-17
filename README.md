@@ -2,7 +2,7 @@
 
 **Una IA entrenada con ~3.000 simulaciones FEM de código abierto que simula y rediseña un limitador de corriente de falla, servida como API web.**
 
-**▶ Demo en vivo:** _(link de Streamlit Community Cloud)_ · **API:** `uvicorn api.main:app` → `/docs`
+**▶ Demo en vivo:** _https://fcl-limitador.streamlit.app/_ · **API:** `uvicorn api.main:app` → `/docs`
 
 Reproduzco el limitador de núcleo de aire de *Amini, Damaki Aliabad y Amiri, "Design and Analysis of Fault Current Limiter Based on Air Core Variable Series Reactor", IEEE Access, 2021*. Lo simulo con GMSH + Elmer, entreno un modelo sustituto (*surrogate*) que lo evalúa ~10.000 veces más rápido, simulo la falla con ese modelo y lo uso para buscar mejores diseños.
 
