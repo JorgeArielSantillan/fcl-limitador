@@ -2,6 +2,8 @@
 
 **Una IA entrenada con ~3.000 simulaciones FEM de código abierto que simula y rediseña un limitador de corriente de falla, servida como API web.**
 
+**▶ Demo en vivo:** _(link de Streamlit Community Cloud)_ · **API:** `uvicorn api.main:app` → `/docs`
+
 Reproduzco el limitador de núcleo de aire de *Amini, Damaki Aliabad y Amiri, "Design and Analysis of Fault Current Limiter Based on Air Core Variable Series Reactor", IEEE Access, 2021*. Lo simulo con GMSH + Elmer, entreno un modelo sustituto (*surrogate*) que lo evalúa ~10.000 veces más rápido, simulo la falla con ese modelo y lo uso para buscar mejores diseños.
 
 ![La falla en el tiempo](docs/img/falla_animada.gif)
@@ -81,7 +83,7 @@ Hipercubo latino más un algoritmo evolutivo simple. Minimiza un objetivo con l�
 
 ### 6. API y frontend
 - `api/main.py` (FastAPI): `/inductancia`, `/simular-falla`, `/optimizar` y `/disenos` (CRUD sobre SQLite). Las entradas se validan con Pydantic dentro del rango del surrogate.
-- `web/app.py` (Streamlit): sliders de geometría, simulación de la falla, optimización con restricciones e historial de diseños.
+- `web/app.py` (Streamlit): sliders de geometría, simulación de la falla, optimización con restricciones e historial de diseños. Si hay una API corriendo la usa por HTTP; si no, llama al núcleo directamente (`web/cliente.py`). Así la misma app se despliega sola en Streamlit Community Cloud.
 
 ## Cómo correrlo
 

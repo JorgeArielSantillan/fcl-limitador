@@ -124,3 +124,23 @@ def test_api():
     nuevo = c.post("/disenos", json={"nombre": "test", "geometria": PAPER.dict()}).json()
     assert c.get(f"/disenos/{nuevo['id']}").status_code == 200
     assert c.delete(f"/disenos/{nuevo['id']}").status_code == 204
+
+
+def test_cliente_modo_local(tmp_path, monkeypatch):
+    import sys
+    monkeypatch.setenv("FCL_DB", str(tmp_path / "t.sqlite"))
+    monkeypatch.delenv("FCL_API", raising=False)
+    sys.path.insert(0, str(RAIZ / "web"))
+    import importlib
+    from api import db
+    importlib.reload(db)
+    import cliente
+    c = cliente.Cliente()
+    c.url, c.modo = "", "local"          # forzar modo local aunque haya una API corriendo
+    assert c.llamar("GET", "/info")["paper"]["N"] == 24
+    r = c.llamar("POST", "/inductancia", {"geometria": PAPER.dict(), "d_m": [0.1]})
+    assert r["L_total_mH"][0] == pytest.approx(0.257, rel=0.01)
+    g = c.llamar("POST", "/disenos", {"nombre": "x", "geometria": PAPER.dict()})
+    assert len(c.llamar("GET", "/disenos")) == 1
+    c.llamar("DELETE", f"/disenos/{g['id']}")
+    assert c.llamar("GET", "/disenos") == []

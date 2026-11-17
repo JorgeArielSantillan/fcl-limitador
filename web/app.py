@@ -1,28 +1,30 @@
 # -*- coding: utf-8 -*-
 """
-Frontend del limitador de corriente de falla (Streamlit). Habla con la API por HTTP.
+Frontend del limitador de corriente de falla (Streamlit).
 
     streamlit run web/app.py
-La URL de la API se toma de la variable de entorno FCL_API (por defecto http://localhost:8000).
+Si hay una API corriendo (FCL_API o http://localhost:8000) la usa; si no, llama al modelo
+directamente (así se despliega solo en Streamlit Community Cloud). Ver web/cliente.py.
 """
-import os
-
 import matplotlib.pyplot as plt
 import pandas as pd
-import requests
 import streamlit as st
 
-API = os.environ.get("FCL_API", "http://localhost:8000").rstrip("/")
+from cliente import Cliente, ErrorCliente
+
 st.set_page_config(page_title="Limitador FCL-ACVSR", page_icon="⚡", layout="wide")
+
+
+@st.cache_resource
+def cliente():
+    return Cliente()
 
 
 def llamar(metodo, ruta, **kw):
     try:
-        r = requests.request(metodo, f"{API}{ruta}", timeout=300, **kw)
-        r.raise_for_status()
-        return r.json() if r.content else None
-    except requests.RequestException as e:
-        st.error(f"No pude hablar con la API en {API}{ruta}: {e}")
+        return cliente().llamar(metodo, ruta, kw.get("json"))
+    except ErrorCliente as e:
+        st.error(str(e))
         st.stop()
 
 
@@ -41,7 +43,9 @@ I = info()
 R, P = I["rangos"], I["paper"]
 
 st.title("⚡ Limitador de corriente de falla de núcleo de aire")
-st.caption("Surrogate entrenado con simulaciones FEM (GMSH + Elmer) · basado en Amini et al., IEEE Access 2021")
+st.caption("Surrogate entrenado con simulaciones FEM (GMSH + Elmer) · basado en Amini et al., IEEE Access 2021 · "
+           + ("conectado a la API" if cliente().modo == "api" else "modo local (sin API)")
+           + " · [código en GitHub](https://github.com/JorgeArielSantillan/fcl-limitador)")
 
 # ---------------------------------------------------------------- barra lateral: geometría
 # valores iniciales y cargas pendientes (deben aplicarse ANTES de crear los sliders)

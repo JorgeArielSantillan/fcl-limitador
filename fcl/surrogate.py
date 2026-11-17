@@ -49,7 +49,7 @@ class _GP:
     def normalizar(self, F):
         return 2 * (F - self.lo) / (self.hi - self.lo) - 1
 
-    def __call__(self, F, gradiente=False, bloque=2000):
+    def __call__(self, F, gradiente=False, bloque=500):
         """F: características SIN normalizar (m x p). Devuelve media y, opcionalmente,
         dy/dF (m x p) respecto de las características sin normalizar."""
         Xn = self.normalizar(np.atleast_2d(F))
