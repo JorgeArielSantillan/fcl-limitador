@@ -4,6 +4,8 @@
 
 Reproduzco el limitador de núcleo de aire de *Amini, Damaki Aliabad y Amiri, "Design and Analysis of Fault Current Limiter Based on Air Core Variable Series Reactor", IEEE Access, 2021*. Lo simulo con GMSH + Elmer, entreno un modelo sustituto (*surrogate*) que lo evalúa ~10.000 veces más rápido, simulo la falla con ese modelo y lo uso para buscar mejores diseños.
 
+![La falla en el tiempo](docs/img/falla_animada.gif)
+
 ![Curva de compromiso](docs/img/frente_pareto.png)
 
 ## Resultado principal
@@ -40,9 +42,11 @@ GMSH (.geo → .msh) → Elmer FEM (magnetostática axisimétrica) → dataset (
 - Validación contra un **método independiente** (filamentos + integrales elípticas de Maxwell): coinciden dentro del 0,5 % en las 2.961 filas, con una mediana de 0,12 %.
 - Contra el paper: L(d) reproduce la forma de la curva con un sesgo uniforme de −6 %, atribuible a modelar el bobinado como un bloque homogéneo.
 
-<!-- Agregar acá los GIF generados por simulacion/fcl_gmsh_elmer.py y fcl_dataset.py:
-![Refinamiento de malla](docs/img/refinamiento_malla.gif)
-![Líneas de flujo vs d](docs/img/lineas_flujo_vs_d.gif) -->
+<p align="center"><img src="docs/img/lineas_flujo_vs_d.gif" width="380" alt="Líneas de flujo al separar las bobinas"></p>
+<p align="center"><sub>Campo magnético al separar las bobinas: el acoplamiento cae y la inductancia del limitador sube ~5 veces (modelo analítico de filamentos, que coincide con Elmer al 0,2 %).</sub></p>
+
+<!-- GIF del refinamiento de malla: se genera con python simulacion/fcl_gmsh_elmer.py
+![Refinamiento de malla](docs/img/refinamiento_malla.gif) -->
 
 ### 2. Dataset (`datos/`)
 - 121 geometrías de entrenamiento y 20 de prueba independientes (hipercubo latino, semillas distintas). Cada una tiene 21 distancias entre bobinas.
@@ -85,6 +89,7 @@ Hipercubo latino más un algoritmo evolutivo simple. Minimiza un objetivo con l�
 pip install -r requirements.txt
 pytest -q                                   # tests
 python estudio_optimizacion.py              # figuras y resultados de este README
+python docs/generar_gifs.py                 # GIF del campo y de la falla
 uvicorn api.main:app --reload               # API → http://localhost:8000/docs
 streamlit run web/app.py                    # frontend (en otra terminal)
 ```
