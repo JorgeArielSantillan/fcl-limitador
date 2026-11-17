@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+datos/disenos.sqlite
+simulacion/fcl_elmer_out/
+simulacion/fcl_dataset_out/
+simulacion/surrogate_out/
+simulacion/validacion_out/

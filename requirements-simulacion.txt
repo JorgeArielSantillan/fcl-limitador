@@ -1,0 +1,4 @@
+# Solo para regenerar el dataset con FEM (además, Elmer FEM instalado aparte)
+gmsh>=4.11
+pillow>=10.0
+meshio>=5.3
